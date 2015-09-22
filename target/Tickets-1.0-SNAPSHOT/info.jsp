@@ -1,56 +1,74 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <!doctype html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Документ без названия</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="stylesheet" type="text/css" href="reset.css">
+    <title>Контакты</title>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/fonts.css">
 </head>
 
 <body>
 <div class="menu">
-    <ul>
-        <li><a href="">Главная</a></li>
-        <li><a href="reservation">Бронирование</a></li>
-        <li><a href="info">Информация</a></li>
-        <li><a href="contacts">Связь</a></li>
-    </ul>
-</div>
-<div class="main">
+    <center><div class="menu_table">
+        <div class="menu_row">
+            <div class="menu_cell menu_title">${Home}</div>
+            <div class="menu_cell menu_title">${Contact}</div>
+            <div class="menu_cell menu_title">${BuyTicket}</div>
+            <div class="menu_cell menu_title">${Info}</div>
+        </div>
+        <div class="menu_row">
+            <div class="menu_cell menu_icon"><a href="/"><img src="img/icon/camera.png" width="72" height="72"></a></div>
+            <div class="menu_cell menu_icon"><a href="contacts"><img src="img/icon/mail.png" width="72" height="72"></a></div>
+            <div class="menu_cell menu_icon"><a href="reservation"><img src="img/icon/money.png" width="72" height="72"></a></div>
+            <div class="menu_cell menu_icon"><a href="info"><img src="img/icon/compose.png" width="72" height="72"></a></div>
 
+        </div>
+    </div></center>
+</div>
     <div class="main">
         <div class="why_bus">
-            <div class="bus_text"><p>Прежде чем начать свое путешествие или если вы водитель</p>
-                <p>вы должны ознакомиться с правилами и требованиями администраций.</p>
-                <p>Если у вас есть какие нибудь вопросы, обратитесь к администраций.</p>
+            <div class="bus_text"><p>${Line17}</p>
+                <p>${Line18}</p>
+                <p>${Line19}</p>
                 <br>
-                <p>Довольный пассажир важнее всего!</p>
+                <p>Tickets Bus</p>
             </div>
         </div>
-        <div class="info_one">
-            <h1>Информация водителям</h1>
-            <h2>Правила</h2>
-            <h2>Устроится на работу</h2>
-            <h3><p>1. Стаж за рулем более 3 лет</p>
-                <p>2. Права категории D</p>
-                <p>3. Адекватность</p>
+        <div class="info_main">
+            <div class="info_one">
+            <h1>${InfoDriver}</h1>
+            <h2>${Rules}</h2>
+            <h2>${ApplyJob}</h2>
+            <h3><p>${Requirements1}</p>
+                <p>${Requirements2}</p>
+                <p>${Requirements3}</p>
                 <p>4. </p>
                 <p>.........................</p>
                 <p>n. </p></h3>
         </div>
 
         <div class="info_two">
-            <h1>Пассажирам</h1>
-            <h2>Правила</h2>
-            <h2>Какой перечень документов необходим?</h2>
+            <h1>${InfoPass}</h1>
+            <h2>${Rules}</h2>
+            <h2>${Documents}</h2>
             <h3><p>1. .....</p></h3>
         </div>
     </div>
-    <div class="footer">
-        <div class="footer_text">
-            <p>Сайт 2015 ©</p>
         </div>
+<center><div class="footer">
+    <div class="footer_menu">
+        <ul>
+            <li><a href="/">${Home}</a></li>
+            <li><a href="contacts">${Contact}</a></li>
+            <li><a href="reservation">${BuyTicket}</a></li>
+            <li><a href="info">${Info}</a></li>
+        </ul>
     </div>
-</div>
+    <div class="footer_title">
+        <p>${Site} 2015 ©</p>
+    </div>
+</div></center>
 </body>
 </html>

@@ -10,7 +10,7 @@ import java.sql.SQLException;
  */
 public class Payment {
 
-    private String ip, ik_co_id, ik_co_prs_id, ik_inv_id, ik_inv_st, ik_inv_crt, ik_inv_prc, ik_trn_id, ik_pm_no, ik_pw_via, ik_am, ik_co_rfn, ik_ps_price, ik_cur, ik_desc, ik_sign;
+    private String ip, ik_co_id, ik_co_prs_id, ik_inv_id, ik_inv_st, ik_inv_crt, ik_inv_prc, ik_trn_id, ik_pm_no, ik_pw_via, ik_am, ik_co_rfn, ik_ps_price, ik_cur, ik_desc, ik_sign, email;
 
     private long id;
 
@@ -25,7 +25,7 @@ public class Payment {
         long id = 0;
         try {
             resultSet.next();
-            id = resultSet.getLong(1);
+                id = resultSet.getLong(1);
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Вы ничего не ввели");
@@ -49,10 +49,21 @@ public class Payment {
 
         DBWorker dbWorker = new DBWorker();
         dbWorker.execute(query);
+        ResultSet resultSet = dbWorker.executeQuery("SELECT LAST_INSERT_ID()");
+        long id = 0;
+        try {
+            resultSet.next();
+            id = resultSet.getLong(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Вы ничего не ввели");
+        }
+        dbWorker.closeConnection();
+        this.id = id;
         dbWorker.closeConnection();
     }
 
-    public Payment(String ip, String ik_co_id, String ik_co_prs_id, String ik_inv_id, String ik_inv_st, String ik_inv_crt, String ik_inv_prc, String ik_trn_id, String ik_pm_no, String ik_pw_via, String ik_am, String ik_co_rfn, String ik_ps_price, String ik_cur, String ik_desc, String ik_sign) {
+    public void setParametrs(String ip, String ik_co_id, String ik_co_prs_id, String ik_inv_id, String ik_inv_st, String ik_inv_crt, String ik_inv_prc, String ik_trn_id, String ik_pm_no, String ik_pw_via, String ik_am, String ik_co_rfn, String ik_ps_price, String ik_cur, String ik_desc, String ik_sign){
         this.ip = ip; // ип отправителя
         this.ik_co_id = ik_co_id; // идентификатор кассы
         this.ik_co_prs_id = ik_co_prs_id; //идентификатор кошелька кассы
@@ -71,9 +82,30 @@ public class Payment {
         this.ik_sign = ik_sign; //цифровая подпись
     }
 
+    public void insertInDB(String ip, String ik_co_id, String ik_co_prs_id, String ik_inv_id, String ik_inv_st, String ik_inv_crt, String ik_inv_prc, String ik_trn_id, String ik_pm_no, String ik_pw_via, String ik_am, String ik_co_rfn, String ik_ps_price, String ik_cur, String ik_desc, String ik_sign) {
+        String query = "UPDATE payment SET ip= '" + ip + "', ik_co_prs_id = '" + ik_co_prs_id +"', ik_inv_id = '" + ik_inv_id + "', ik_inv_st = '" +ik_inv_st+"', ik_inv_crt = '" + ik_inv_crt +"'";
+        query += ", ik_inv_prc = '" + ik_inv_prc + "', ik_trn_id = '" + ik_trn_id + "', ik_pw_via = '" + ik_pw_via + "'";
+        query += ", ik_co_rfn = '" + ik_co_rfn + "', ik_ps_price = '" + ik_ps_price + "', ik_sign = '" + ik_sign + "'";
+        query += "WHERE id = " + Integer.parseInt(ik_pm_no);
+        DBWorker dbWorker = new DBWorker();
+        dbWorker.execute(query);
+        dbWorker.closeConnection();
+    }
 
-    public boolean checkAll() {
-        if (checkCass(ik_co_id) && checkStatus(ik_inv_st) && checkIP(ip) && checkCost(ik_am, "100") && checkDesc(ik_desc, "Event Description") && checkID(ik_pm_no, "ID_4233") && checkRefund(ik_co_rfn, "100"))
+    public Payment(String ik_co_id, String ik_am, String ik_pm_no, String ik_cur, String ik_desc) {
+        this.ik_co_id = ik_co_id;
+        this.ik_am = ik_am;
+        this.ik_pm_no = ik_pm_no;
+        this.ik_cur = ik_cur;
+        this.ik_desc = ik_desc;
+    }
+
+    public Payment(String ik_pm_no) {
+        this.ik_pm_no = ik_pm_no;
+    }
+
+    public boolean checkAll(Payment new_payment) {
+        if (checkCass(new_payment.ik_co_id) && checkStatus(new_payment.ik_inv_st) && checkIP(new_payment.ip) && checkCost(ik_am, new_payment.ik_am) && checkDesc(ik_desc, new_payment.ik_desc))
             return true;
         else return false;
     }
@@ -124,4 +156,31 @@ public class Payment {
             return true;
         else return false;
     }
+
+    public void getPay(){
+        String query = "SELECT ik_co_id, ik_pm_no, ik_am, ik_cur, ik_desc, email FROM payment WHERE id = " + this.ik_pm_no;
+        DBWorker dbWorker = new DBWorker();
+        ResultSet resultSet = dbWorker.executeQuery(query);
+        try {
+            resultSet.next();
+            this.ik_co_id = resultSet.getString("ik_co_id");
+            this.ik_pm_no = resultSet.getString("ik_pm_no");
+            this.ik_am = resultSet.getString("ik_am");
+            this.ik_cur = resultSet.getString("ik_cur");
+            this.ik_desc = resultSet.getString("ik_desc");
+            this.email = resultSet.getString("email");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        dbWorker.closeConnection();
+    }
+
+    public String getIk_desc() {
+        return ik_desc;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
 }

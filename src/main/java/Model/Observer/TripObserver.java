@@ -73,9 +73,9 @@ public abstract class TripObserver {
                 "       AND       \n" +
                 "       routes.to_station = s2.Id       \n" +
                 "       AND\n" +
-                "       s1.city = (SELECT Id FROM cities WHERE name = '" + fromCity + "')\n" +
+                "       s1.city = (SELECT Id FROM cities WHERE name_en = '" + fromCity + "')\n" +
                 "       AND\n" +
-                "       s2.city = (SELECT Id FROM cities WHERE name = '" + toCity + "')" +
+                "       s2.city = (SELECT Id FROM cities WHERE name_en = '" + toCity + "')" +
                 "       AND\n" +
                 "       trips.departure >= '"+ date +"' AND trips.departure < '"+ date +" 23:59:59.997'";
         DBWorker dbWorker = new DBWorker();

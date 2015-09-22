@@ -1,60 +1,71 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Auto-Completion using AJAX</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="stylesheet" type="text/css" href="reset.css">
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/fonts.css">
+    <script src="calendar_ru.js" type="text/javascript"></script>
     <script type="text/javascript" src="javascript.js"></script>
+    <script src="calendar_ru.js" type="text/javascript"></script>
 </head>
-<body onload="init()">
+<body onload="init(); today();">
 <div class="menu">
-    <ul>
-        <li><a href="/">Главная</a></li>
-        <li><a href="reservation">Бронирование</a></li>
-        <li><a href="info">Информация</a></li>
-        <li><a href="contacts">Связь</a></li>
-    </ul>
+    <center><div class="menu_table">
+        <div class="menu_row">
+            <div class="menu_cell menu_title">${Home}</div>
+            <div class="menu_cell menu_title">${Contact}</div>
+            <div class="menu_cell menu_title">${BuyTicket}</div>
+            <div class="menu_cell menu_title">${Info}</div>
+        </div>
+        <div class="menu_row">
+            <div class="menu_cell menu_icon"><a href="/"><img src="img/icon/camera.png" width="72" height="72"></a></div>
+            <div class="menu_cell menu_icon"><a href="contacts"><img src="img/icon/mail.png" width="72" height="72"></a></div>
+            <div class="menu_cell menu_icon"><a href="reservation"><img src="img/icon/money.png" width="72" height="72"></a></div>
+            <div class="menu_cell menu_icon"><a href="info"><img src="img/icon/compose.png" width="72" height="72"></a></div>
+
+        </div>
+    </div></center>
 </div>
 <div class="main">
     <div class="why_bus">
-        <div class="bus_text"><p>Почему путешествие на автобусе это удобно?</p>
-            <p>Мы вам приведем три примера, после которых вы полностью перейдете на сторону автобусов.</p>
-            <p>Во первых комфортные места, хорошие новые автобусы, wifi, кондиционер, вежливый водитель</p>
-            опытный, который вам всегде окажет помощь, уютные кресла, телевизор.</p>
-            <p>Остановки. Вы сможете выйти размяться, подышать воздухом, пообщаться с соседом по креслу</p>
-            <p>А самое главное это быстрая, качественная и удобная поездка. 16 часовые плацкарты это уже в прошлом.</p>
-            <p>Путешествовать можно семьей, с коллегами, с супрогом или супрогой, или самому.</p>
+        <div class="bus_text"><p>${OneStepLine}</p>
+            <p>${Line1}</p>
+            <p>${Line2}</p>
+            <p>${Line3}</p>
+            <p>${Line4}</p>
             <br>
-            <p>Довольный пассажир важнее всего!</p>
+            <p>Ticket Bus</p>
         </div>
     </div>
     <div class="step">
-        <div id="#triangle" class="step_one" style="background:#1DCCD5;">
-            <center><p>1. Выбор рейса, даты</p></center>
+        <div class="step_row">
+        <div class="step_one" style="background:#1DCC99;">
+            <center><p>1. ${Step1}</p></center>
         </div>
         <div class="step_two">
-            <center><p>2. Бронирование</p></center>
+            <center><p>2. ${Step2}</p></center>
         </div>
         <div class="step_three">
-            <center><p>3. Покупка</p></center>
+            <center><p>3. ${Step3}</p></center>
         </div>
     </div>
+        </div>
     <div class="frame">
         <center><%--@declare id="state_list"--%>
 
 
-            <input type="text" class="input"  list="cities" placeholder="Откуда" required max="64" id="from"
-                   onkeyup="doCompletion(this.id);">
+            <input type="text" class="input"  list="cities" placeholder="${From}" required max="64" id="from"
+                   onkeypress="doCompletion(this.id);">
 
             <datalist id="cities">
             </datalist>
-            <input type="text" class="input" placeholder="Куда" required max="64" id="to" onkeyup="doCompletion(this.id);" list="cities">
-
-            <input type="date" class="input "id="date"><script>document.getElementById('date').valueAsDate = new Date();</script>
-            <input type="submit" class="button" value="Поиск" onClick="search_trips()">
+            <input type="text" class="input" placeholder="${To}" required max="64" id="to" onkeydown="doCompletion(this.id);" list="cities">
+            <input type="text" class="input" value="${SelectDate}" onfocus="this.select();lcs(this)"
+                   onclick="event.cancelBubble=true;this.select();lcs(this)" class="input" id="date">
+            <input type="submit" class="button" value="${Search}" onClick="search_trips()">
         </center>
     </div>
 
@@ -69,24 +80,24 @@
             <div class="table">
                 <div class="row_info">
                     <div class="col date">
-                        <b>Дата:</b>
+                        <b>${Date}:</b>
                     </div>
 
                     <div class="col c">
-                        <b>Отправление</b>
+                        <b>${Departure}</b>
                     </div>
 
                     <div class="col date">
-                        <b>Дата:</b>
+                        <b>${Date}:</b>
                     </div>
 
                     <div class="col c">
-                        <b>Прибытие</b>
+                        <b>${Arrival}</b>
                     </div>
 
 
                     <div class="col c">
-                        <b>Стоимость</b>
+                        <b>${Price}</b>
                     </div>
                 </div>
             </div>
@@ -95,11 +106,19 @@
         </div>
     </center>
 </div>
-<div class="footer">
-    <div class="footer_text">
-        <p>Сайт 2015 ©</p>
+<center><div class="footer">
+    <div class="footer_menu">
+        <ul>
+            <li><a href="/">${Home}</a></li>
+            <li><a href="contacts">${Contact}</a></li>
+            <li><a href="reservation">${BuyTicket}</a></li>
+            <li><a href="info">${Info}</a></li>
+        </ul>
     </div>
+    <div class="footer_title">
+        <p>${Site} 2015 ©</p>
     </div>
+</div></center>
     <form action="step2" method="get" style="display: none">
         <input type="text" value="0" id="tripId"name="id">
         <input type="submit" id="sendIdButton">

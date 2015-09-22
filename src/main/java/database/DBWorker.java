@@ -137,6 +137,20 @@ public class DBWorker {
         return res;
     }
 
+    public String getPhrase(long id, String lang) {
+        ResultSet resultSet = null;
+        try {
+            resultSet = statement.executeQuery("SELECT "+ lang +" FROM translator WHERE Id = " + id);
+            if(resultSet.next())
+                return resultSet.getString(1);
+            else
+                return "NOT FOUND";
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "NOT FOUND";
+        }
+    }
+
 
 
     public void closeConnection() {

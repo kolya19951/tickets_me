@@ -13,15 +13,30 @@ function init() {
 var itog = "";
 
 function doCompletion(id) {
-    itog = "";
     completeField = document.getElementById(id);
-    ishodn = completeField.value.toLowerCase();
-    for (i = 0; i < ishodn.length; i++) {
-        var perem = ishodn.charCodeAt(i);
-        itog += perem.toString();
-    }
-    var url = "action=complete&id=";
-    url += itog;
+//ishodn = completeField.value.toLowerCase();
+//for (i = 0; i < ishodn.length; i++) {
+// var perem = ishodn.charCodeAt(i);
+// itog = perem.toString();
+//}
+//var url = "action=complete&name=" + itog;
+    var url = "action=complete&name=" + completeField.value.toLowerCase();
+    req = initRequest();
+    req.open("POST", "autocomplete", true);
+    req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    req.onreadystatechange = callback;
+    req.send(url);
+}
+
+function doTimeCompletion(id){
+    completeField = document.getElementById(id);
+//ishodn = completeField.value.toLowerCase();
+//for (i = 0; i < ishodn.length; i++) {
+// var perem = ishodn.charCodeAt(i);
+// itog = perem.toString();
+//}
+//var url = "action=complete&name=" + itog;
+    var url = "action=complete&name=" + completeField.value.toLowerCase();
     req = initRequest();
     req.open("POST", "autocomplete", true);
     req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -54,10 +69,6 @@ function initRequest() {
 }
 
 function callbackTrips() {
-
-    clearTable();
-
-
     if (req.readyState == 4) {
         if (req.status == 200) {
             buildTripTable(req.responseXML);
@@ -66,10 +77,7 @@ function callbackTrips() {
 }
 
 function callback() {
-
     clearTable();
-
-
     if (req.readyState == 4) {
         if (req.status == 200) {
             parseMessages(req.responseXML);
@@ -82,6 +90,12 @@ function appendComposer(firstName) {
     option.setAttribute("value", firstName);
     document.getElementById("cities").appendChild(option);
 }
+function appendCity(name_en) {
+    option = document.createElement("option");
+    option.setAttribute("value", name_en);
+    document.getElementById("cities").appendChild(option);
+}
+
 
 function clearTable() {
     document.getElementById("cities").innerHTML = "";
@@ -89,25 +103,25 @@ function clearTable() {
 
 function parseMessages(responseXML) {
 
-    // no matches returned
+// no matches returned
     if (responseXML == null) {
         return false;
     } else {
 
-        var composers = responseXML.getElementsByTagName("cities")[0];
+        var cities = responseXML.getElementsByTagName("cities")[0];
         var actionTag = responseXML.getElementsByTagName("action")[0];
         var action = actionTag.getElementsByTagName("name")[0];
         if (action == "autocomplete") {
         }
-        if (composers.childNodes.length > 0) {
+        if (cities.childNodes.length > 0) {
             completeTable.setAttribute("bordercolor", "black");
             completeTable.setAttribute("border", "1");
 
-            for (loop = 0; loop < composers.childNodes.length; loop++) {
-                var composer = composers.childNodes[loop];
-                var firstName = composer.getElementsByTagName("firstName")[0];
-                var composerId = composer.getElementsByTagName("id")[0];
-                appendComposer(firstName.childNodes[0].nodeValue);
+            for (loop = 0; loop < cities.childNodes.length; loop++) {
+                    var city = cities.childNodes[loop + 1];
+                var name_en = city.getElementsByTagName("name_en")[0];
+                var cityId = city.getElementsByTagName("id")[0];
+                appendCity(name_en.childNodes[0].nodeValue);
             }
         }
         if (action == "trips") {
@@ -176,6 +190,13 @@ function buildTripTable(responseXML) {
             bColCCost.innerHTML = "100 €";
         }
     }
+    else{
+        field = document.getElementById("tripsTable");
+        block = document.createElement("div");
+        block.innerHTML = "По вашему запросу билетов не найдено";
+        block.setAttribute("class", "no_trips");
+        field.appendChild(block);
+    }
 }
 
 function chooseTrip(id) {
@@ -187,11 +208,11 @@ var previous, element;
 
 function choosePlace(element) {
     if (previous != null)
-        previous.style.backgroundColor = "white";
+        previous.style.backgroundColor = "#98FB98";
     element.style.backgroundColor = "green";
     previous = element;
-    document.getElementById("cost").innerHTML = "Стоимость билета: " + element.className;
-    document.getElementById("placeNum").innerHTML = "Номер места: " + element.innerHTML;
+    document.getElementById("placeCost").innerHTML = ": " + element.title;
+    document.getElementById("num").innerHTML = ": " + element.innerHTML;
 }
 
 function goToStep3() {
@@ -210,8 +231,8 @@ function goToPay() {
     desc += document.getElementById("arrivalDate").innerHTML + ", ";
     desc += document.getElementById("arrivalTime").innerHTML + ", ";
     desc += document.getElementById("price").innerHTML + ", ";
-    desc += document.getElementById("surname").value + " ";
-    desc += document.getElementById("name").value;
+    /*desc += document.getElementById("surname").value + " ";
+    desc += document.getElementById("name").value;*/
     document.getElementById("ik_desc").value = desc;
     sendPaymentToServer();
 }
@@ -232,13 +253,12 @@ function sendPaymentToServer() {
         str += "&phone=" + phone;
         action = 1;
     }
-    else if (email.length > 0) {
+    if (email.length > 0) {
         str += "&email=" + email;
         action = 2;
     }
-    else if (phone.length > 0 && email.length > 0)
+    if (phone.length > 0 && email.length > 0)
         action = 3;
-    else action = 0;
     str += "&action=" + action;
     req = initRequest();
     req.open("POST", "/newPayment", true);

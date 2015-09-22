@@ -1,0 +1,24 @@
+/*Fonts*/
+
+/*Arian*/
+@font-face {
+    font-family: 'Arian AMU';
+    src: url('../fonts/arnamu.eot');
+    src: url('../fonts/arnamu.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/arnamu.woff') format('woff'),
+         url('../fonts/arnamu.tff') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Didact Gothic';
+    src: url('../fonts/didactgothic.eot');
+    src: url('../fonts/didactgothic.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/didactgothic.woff') format('woff'),
+         url('../fonts/didactgothic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}

@@ -18,7 +18,7 @@ import java.util.Iterator;
 /**
  * Created by Денис on 13.09.2015.
  */
-@WebServlet("/autocomplete")
+//@WebServlet("/autocomplete")
 public class Autocomplition extends HttpServlet {
     private static String str;
     private ServletContext context;

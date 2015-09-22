@@ -17,6 +17,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,8 +36,44 @@ public class Step3 extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        if(session.isNew())
+            session.setAttribute("lang", "en");
+        String lang = (String) session.getAttribute("lang");
+        DBWorker dbWorker = new DBWorker();
+
+        request.setAttribute("Home", dbWorker.getPhrase(1, lang));
+        request.setAttribute("Contact", dbWorker.getPhrase(2, lang));
+        request.setAttribute("BuyTicket", dbWorker.getPhrase(3, lang));
+        request.setAttribute("Info", dbWorker.getPhrase(4, lang));
+        request.setAttribute("Step1", dbWorker.getPhrase(5, lang));
+        request.setAttribute("Step2", dbWorker.getPhrase(6, lang));
+        request.setAttribute("Step3", dbWorker.getPhrase(7, lang));
+        request.setAttribute("Site", dbWorker.getPhrase(16, lang));
+        request.setAttribute("Line10", dbWorker.getPhrase(30, lang));
+        request.setAttribute("Line11", dbWorker.getPhrase(31, lang));
+        request.setAttribute("Line12", dbWorker.getPhrase(32, lang));
+        request.setAttribute("Line13", dbWorker.getPhrase(33, lang));
+        request.setAttribute("Line14", dbWorker.getPhrase(34, lang));
+        request.setAttribute("Line15", dbWorker.getPhrase(35, lang));
+        request.setAttribute("Href1", dbWorker.getPhrase(36, lang));
+        request.setAttribute("Surname", dbWorker.getPhrase(37, lang));
+        request.setAttribute("Name", dbWorker.getPhrase(38, lang));
+        request.setAttribute("Phone", dbWorker.getPhrase(39, lang));
+        request.setAttribute("Payments", dbWorker.getPhrase(40, lang));
+        request.setAttribute("Detals", dbWorker.getPhrase(41, lang));
+        request.setAttribute("Help1", dbWorker.getPhrase(42, lang));
+        request.setAttribute("Help2", dbWorker.getPhrase(43, lang));
+        request.setAttribute("Line16", dbWorker.getPhrase(50, lang));
+        request.setAttribute("Date", dbWorker.getPhrase(12, lang));
+        request.setAttribute("Departure", dbWorker.getPhrase(13, lang));
+        request.setAttribute("Arrival", dbWorker.getPhrase(14, lang));
+        request.setAttribute("Price", dbWorker.getPhrase(15, lang));
+        request.setAttribute("From", dbWorker.getPhrase(8, lang));
+        request.setAttribute("To", dbWorker.getPhrase(9, lang));
+
         Integer id = new Integer(request.getParameter("id"));
-        String query = "SELECT cities1.name, cities2.name, stations1.name, stations2.name, trips.departure, trips.arrival, seats.price FROM\n" +
+        String query = "SELECT cities1.name_en, cities2.name_en, stations1.name, stations2.name, trips.departure, trips.arrival, seats.price FROM\n" +
                 "                cities cities1, cities cities2, stations stations1, stations stations2, trips, seats, routes WHERE                \n" +
                 "                       seats.Id = " + id + "\n" +
                 "                       AND\n" +
@@ -51,8 +88,6 @@ public class Step3 extends HttpServlet {
                 "                       stations1.city = cities1.Id                       \n" +
                 "                       AND                       \n" +
                 "                       stations2.city = cities2.Id";
-
-        DBWorker dbWorker = new DBWorker();
 
         ResultSet resultSet = dbWorker.executeQuery(query);
         try {

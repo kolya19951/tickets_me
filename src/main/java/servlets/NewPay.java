@@ -31,15 +31,15 @@ public class NewPay extends HttpServlet {
             phone = request.getParameter("phone");
             payment = new Payment(ik_co_id, ik_pm_no, ik_am, ik_cur, ik_desc, nameSurname, 1, phone, "");
         }
-        else if (action.equals("2")) {
+        if (action.equals("2")) {
             email = request.getParameter("email");
             payment = new Payment(ik_co_id, ik_pm_no, ik_am, ik_cur, ik_desc, nameSurname, 2, "", email);
         }
-        else if (action.equals("3")) {
+        if (action.equals("3")) {
             phone = request.getParameter("phone");
             email = request.getParameter("email");
-            new Payment(ik_co_id, ik_pm_no, ik_am, ik_cur, ik_desc, nameSurname, 3, phone, email);
-        } else payment =new Payment(ik_co_id, ik_pm_no, ik_am, ik_cur, ik_desc, nameSurname);
+            payment = new Payment(ik_co_id, ik_pm_no, ik_am, ik_cur, ik_desc, nameSurname, 3, phone, email);
+        }
 
         StringBuffer sb = new StringBuffer();
         long id = payment.getId();
