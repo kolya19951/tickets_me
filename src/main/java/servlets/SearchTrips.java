@@ -23,17 +23,23 @@ import java.util.ArrayList;
  */
 @WebServlet("/reservation")
 public class SearchTrips extends HttpServlet {
-
     private ServletContext context;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
         String from = request.getParameter("from");
         String to = request.getParameter("to");
         String date = request.getParameter("date");
         StringBuffer sb = new StringBuffer();
-        response.setCharacterEncoding("UTF-8");
+        HttpSession session = request.getSession();
+        if(session.isNew()) {
+            session.setAttribute("lang", "en");
+        }
+        String lang = (String) session.getAttribute("lang");
 
-        ArrayList<TripViewer> tripViewers = TripObserver.findTripsViewers(from, to, date);
+
+        ArrayList<TripViewer> tripViewers = TripObserver.findTripsViewers(from, to, date, lang);
         for (TripViewer item : tripViewers) {
             sb.append("<trip>");
             sb.append("<datefromtime>" + String.format("%tR", item.getDepartureTime()) + "</datefromtime>");

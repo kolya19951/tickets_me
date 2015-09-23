@@ -1,7 +1,7 @@
 var completeField;
 var completeTable;
 var autoRow;
-var req, req;
+var req;
 var isIE;
 
 function init() {
@@ -11,37 +11,58 @@ function init() {
 }
 
 var itog = "";
-
-function doCompletion(id) {
+var id = "";
+function doCompletion(ID) {
+    id = ID;
     completeField = document.getElementById(id);
-//ishodn = completeField.value.toLowerCase();
-//for (i = 0; i < ishodn.length; i++) {
-// var perem = ishodn.charCodeAt(i);
-// itog = perem.toString();
-//}
-//var url = "action=complete&name=" + itog;
+    //ishodn = completeField.value.toLowerCase();
+    //for (i = 0; i < ishodn.length; i++) {
+    //    var perem = ishodn.charCodeAt(i);
+    //    itog = perem.toString();
+    //}
+    //var url = "action=complete&name=" + itog;
     var url = "action=complete&name=" + completeField.value.toLowerCase();
     req = initRequest();
     req.open("POST", "autocomplete", true);
     req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    req.onreadystatechange = callback;
+    req.onreadystatechange = callbackAutocomletion;
     req.send(url);
 }
 
-function doTimeCompletion(id){
-    completeField = document.getElementById(id);
-//ishodn = completeField.value.toLowerCase();
-//for (i = 0; i < ishodn.length; i++) {
-// var perem = ishodn.charCodeAt(i);
-// itog = perem.toString();
-//}
-//var url = "action=complete&name=" + itog;
-    var url = "action=complete&name=" + completeField.value.toLowerCase();
+function doCompletionStations(ID) {
+    id = ID;
+    if (id == "route_from_station")
+        field = document.getElementById("route_from");
+    if (id == "route_to_station")
+        field = document.getElementById("route_to");
+    var data = "action=complete&city_id=" + field.accept;
     req = initRequest();
-    req.open("POST", "autocomplete", true);
+    req.open("POST", "show_station_by_city", true);
     req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    req.onreadystatechange = callback;
-    req.send(url);
+    req.onreadystatechange = show_station_autocomplete;
+    req.send(data);
+}
+
+function doCompletionRoutes(ID) {
+    id = ID;
+    from_field = document.getElementById("route_from_city");
+    to_field = document.getElementById("route_to_city");
+    var data = "action=complete&from=" + from_field.accept + "&to=" + to_field.accept;
+    req = initRequest();
+    req.open("POST", "show_route_by_cities", true);
+    req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    req.onreadystatechange = show_routes_autocomplete;
+    req.send(data);
+}
+
+function doCompletionBuses(ID) {
+    id = ID;
+    var data = "";
+    req = initRequest();
+    req.open("POST", "show_bus", true);
+    req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    req.onreadystatechange = show_buses_autocomplete;
+    req.send(data);
 }
 
 function search_trips() {
@@ -69,6 +90,10 @@ function initRequest() {
 }
 
 function callbackTrips() {
+
+    clearTable();
+
+
     if (req.readyState == 4) {
         if (req.status == 200) {
             buildTripTable(req.responseXML);
@@ -76,34 +101,55 @@ function callbackTrips() {
     }
 }
 
-function callback() {
+function callbackAutocomletion() {
+
     clearTable();
+
+
     if (req.readyState == 4) {
         if (req.status == 200) {
-            parseMessages(req.responseXML);
+            var respXML = req.responseXML;
+            parseMessages(respXML);
         }
     }
 }
 
-function appendComposer(firstName) {
+function appendCity(name, cityId) {
     option = document.createElement("option");
-    option.setAttribute("value", firstName);
-    document.getElementById("cities").appendChild(option);
-}
-function appendCity(name_en) {
-    option = document.createElement("option");
-    option.setAttribute("value", name_en);
+    document.getElementById(id).accept = cityId;
+    option.setAttribute("value", name);
     document.getElementById("cities").appendChild(option);
 }
 
+function appendStations(name, stationId) {
+    option = document.createElement("option");
+    document.getElementById(id).accept = stationId;
+    option.setAttribute("value", name);
+    document.getElementById("stations").appendChild(option);
+}
+
+function appendRoutes(name_from, name_to, stationId) {
+    option = document.createElement("option");
+    document.getElementById(id).accept = stationId;
+    option.setAttribute("value", name_from + " - " + name_to);
+    document.getElementById("routes").appendChild(option);
+}
+
+function appendBuses(name, busId) {
+    option = document.createElement("option");
+    document.getElementById(id).accept = busId;
+    option.setAttribute("value", name);
+    document.getElementById("buses").appendChild(option);
+}
 
 function clearTable() {
     document.getElementById("cities").innerHTML = "";
 }
 
+
 function parseMessages(responseXML) {
 
-// no matches returned
+    // no matches returned
     if (responseXML == null) {
         return false;
     } else {
@@ -114,14 +160,11 @@ function parseMessages(responseXML) {
         if (action == "autocomplete") {
         }
         if (cities.childNodes.length > 0) {
-            completeTable.setAttribute("bordercolor", "black");
-            completeTable.setAttribute("border", "1");
-
             for (loop = 0; loop < cities.childNodes.length; loop++) {
-                    var city = cities.childNodes[loop + 1];
-                var name_en = city.getElementsByTagName("name_en")[0];
-                var cityId = city.getElementsByTagName("id")[0];
-                appendCity(name_en.childNodes[0].nodeValue);
+                var city = cities.childNodes[loop + 1];
+                var name = city.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+                var cityId = city.getElementsByTagName("id")[0].childNodes[0].nodeValue;
+                appendCity(name, cityId);
             }
         }
         if (action == "trips") {
@@ -129,6 +172,7 @@ function parseMessages(responseXML) {
         }
     }
 }
+
 function buildTripTable(responseXML) {
     var trips = responseXML.getElementsByTagName("trips")[0];
     document.getElementById("tripsTable").innerHTML = "";
@@ -220,6 +264,7 @@ function goToStep3() {
     document.getElementById("sendIdButton").click();
 }
 
+
 function goToPay() {
     desc = "";
     desc += document.getElementById("departureCity").innerHTML + ", ";
@@ -231,8 +276,8 @@ function goToPay() {
     desc += document.getElementById("arrivalDate").innerHTML + ", ";
     desc += document.getElementById("arrivalTime").innerHTML + ", ";
     desc += document.getElementById("price").innerHTML + ", ";
-    /*desc += document.getElementById("surname").value + " ";
-    desc += document.getElementById("name").value;*/
+    desc += document.getElementById("surname").value + " ";
+    desc += document.getElementById("name").value;
     document.getElementById("ik_desc").value = desc;
     sendPaymentToServer();
 }
@@ -253,12 +298,13 @@ function sendPaymentToServer() {
         str += "&phone=" + phone;
         action = 1;
     }
-    if (email.length > 0) {
+    else if (email.length > 0) {
         str += "&email=" + email;
         action = 2;
     }
-    if (phone.length > 0 && email.length > 0)
+    else if (phone.length > 0 && email.length > 0)
         action = 3;
+    else action = 0;
     str += "&action=" + action;
     req = initRequest();
     req.open("POST", "/newPayment", true);
@@ -275,7 +321,7 @@ function callbackPay() {
     }
 }
 
-function goToCassa(responseXML){
+function goToCassa(responseXML) {
     id = responseXML.getElementsByTagName("ids")[0].childNodes[0].getElementsByTagName("Id")[0].childNodes[0].nodeValue;
     document.getElementById("ik_pm_no").value = id;
     document.getElementById("pay").click();

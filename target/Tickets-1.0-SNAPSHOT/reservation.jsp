@@ -58,11 +58,11 @@
 
 
             <input type="text" class="input"  list="cities" placeholder="${From}" required max="64" id="from"
-                   onkeypress="doCompletion(this.id);">
+                   oninput="doCompletion(this.id);">
 
             <datalist id="cities">
             </datalist>
-            <input type="text" class="input" placeholder="${To}" required max="64" id="to" onkeydown="doCompletion(this.id);" list="cities">
+            <input type="text" class="input" placeholder="${To}" required max="64" id="to" oninput="doCompletion(this.id);" list="cities">
             <input type="text" class="input" value="${SelectDate}" onfocus="this.select();lcs(this)"
                    onclick="event.cancelBubble=true;this.select();lcs(this)" class="input" id="date">
             <input type="submit" class="button" value="${Search}" onClick="search_trips()">

@@ -73,7 +73,7 @@ public class Step3 extends HttpServlet {
         request.setAttribute("To", dbWorker.getPhrase(9, lang));
 
         Integer id = new Integer(request.getParameter("id"));
-        String query = "SELECT cities1.name_en, cities2.name_en, stations1.name, stations2.name, trips.departure, trips.arrival, seats.price FROM\n" +
+        String query = "SELECT cities1.name_" + lang + ", cities2.name_" + lang + ", stations1.name_" + lang + ", stations2.name_" + lang + ", trips.departure, trips.arrival, seats.price FROM\n" +
                 "                cities cities1, cities cities2, stations stations1, stations stations2, trips, seats, routes WHERE                \n" +
                 "                       seats.Id = " + id + "\n" +
                 "                       AND\n" +

@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * Created by on 13.09.2015.
+ * Created by ����� on 13.09.2015.
  */
 @WebServlet("/autocomplete")
 public class Autocomplition2 extends HttpServlet {
@@ -31,24 +32,31 @@ public class Autocomplition2 extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
         String targetId = request.getParameter("name");
+
+        HttpSession session = request.getSession();
+        if (session.isNew()) {
+            session.setAttribute("lang", "en");
+        }
+        String lang = (String) session.getAttribute("lang");
+
         StringBuffer sb = new StringBuffer();
 
         boolean namesAdded = false;
         if (action.equals("complete")) {
             if (!targetId.equals("")) {
                 DBWorker dbWorker = new DBWorker();
-                String query = "SELECT * FROM cities WHERE (name_en LIKE '%" + targetId + "%') OR (name_ru LIKE '%" + targetId + "%')";
+                String query = "SELECT * FROM cities WHERE name_"+lang+" LIKE '%" + targetId + "%'";
                 System.out.println();
                 ResultSet resultSet = dbWorker.executeQuery(query);
 
+                //sb.append("<action><name>autocomplete</name></action>");
                 try {
                     sb.append("<cities>");
                     sb.append("<action><name>autocomplete</name></action>");
                     while (resultSet.next()) {
                         sb.append("<city>");
                         sb.append("<id>" + resultSet.getLong("Id") + "</id>");
-                        sb.append("<name_en>" + resultSet.getString("name_en") + "</name_en>");
-                        sb.append("<name_ru>" + resultSet.getString("name_ru") + "</name_ru>");
+                        sb.append("<name>" + resultSet.getString("name_"+lang) + "</name>");
                         sb.append("</city>");
                         namesAdded = true;
                     }
@@ -72,6 +80,11 @@ public class Autocomplition2 extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
+        HttpSession session = request.getSession();
+        if (session.isNew()) {
+            session.setAttribute("lang", "en");
+        }
+        String lang = (String) session.getAttribute("lang");
 
     }
 

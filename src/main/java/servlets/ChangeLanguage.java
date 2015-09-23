@@ -31,6 +31,8 @@ public class ChangeLanguage extends HttpServlet {
             session.setAttribute("lang", "en");
         }
         String lang = (String) session.getAttribute("lang");
+        lang = request.getParameter("lang");
+        session.setAttribute("lang", lang);
         response.setCharacterEncoding("UTF-8");
     }
 
